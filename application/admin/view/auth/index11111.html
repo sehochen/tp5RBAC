@@ -1,0 +1,286 @@
+{include file="common/head" /}
+
+<!-- 引入bootstrap样式 -->
+<link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<!-- 引入bootstrap-table样式 -->
+<link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
+
+<!-- jquery -->
+<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- bootstrap-table.min.js -->
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+<!-- 引入中文语言包 -->
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
+<body>
+<!--header-->
+<header>
+ <h1><img src="/static/admin/img/admin_logo.png"/></h1>
+ <ul class="rt_nav">
+  <li><a href="http://www.deathghost.cn" target="_blank" class="website_icon">站点首页</a></li>
+  <!--<li><a href="#" class="clear_icon">清除缓存</a></li>-->
+  <!--<li><a href="#" class="admin_icon">DeathGhost</a></li>-->
+  <li><a href="#" class="set_icon">账号设置</a></li>
+  <li><a href="{:url('admin/login/logout')}" class="quit_icon">安全退出</a></li>
+ </ul>
+</header>
+<!--aside nav-->
+{include file="common/nav" /}
+<!--aside nav-->
+
+
+<style>
+.dataStatistic{width:400px;height:200px;border:1px solid #ccc;margin:0 auto;margin:10px;overflow:hidden}
+#cylindrical{width:400px;height:200px;margin-top:-15px}
+#line{width:400px;height:200px;margin-top:-15px}
+#pie{width:400px;height:200px;margin-top:-15px}
+</style>
+<section class="rt_wrap content mCustomScrollbar">
+
+ <div class="rt_content" id="app">
+     <span>首页/管理员/管理员列表</span>
+     <button class="layui-btn layui-btn-fluid">管理员列表</button>
+
+     <div  class="layui-col-md12" style="margin-top: 1%;">
+         <div class="layui-col-md2" style="margin-right: 1%;">
+             <input type="text" name="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+         </div>
+         <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon"></i></button>
+     </div>
+     <div  class="layui-col-md12" style="margin-top: 1%;margin-bottom: 1%;">
+         <!--<button class="layui-btn layui-btn-danger" ><i class="layui-icon layui-icon-edit"></i>批量删除</button>-->
+         <button class="layui-btn" ><i class="layui-icon"></i>添加</button>
+     </div>
+
+<!--     <table class="layui-table">
+         <thead>
+         <tr>
+             <th>ID</th>
+             <th>菜单名</th>
+             <th>父级ID</th>
+             <th>控制器</th>
+             <th>方法</th>
+             <th>全路径</th>
+             <th>等级</th>
+             <th>操作</th>
+         </tr></thead>
+         <tbody>
+
+         {volist name="list" id="vo"}
+         <tr>
+             <td>{$vo.auth_id}</td>
+             <td>
+                 <?php echo str_repeat('&nbsp;&nbsp;&nbsp;/',$vo['auth_level']);?>
+                 {$vo.auth_name}
+             </td>
+             <td>{$vo.auth_pid}</td>
+             <td>{$vo.auth_c}</td>
+             <td>{$vo.auth_a}</td>
+             <th>{$vo.auth_path}</th>
+             <th>{$vo.auth_level}</th>
+             <td class="td-manage">
+                 <a title="编辑" onclick="WeAdminShow('编辑','./role-add.html')" href="javascript:;">
+                     <i class="layui-icon">编辑</i>
+                 </a>
+                 <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
+                     <i class="layui-icon"></i>删除
+                 </a>
+             </td>
+         </tr>
+         {/volist}
+         </tbody>
+     </table>
+     {$list|raw}-->
+<!--     <table data-toggle="table" data-url="data1.json" id="table">
+         <thead>
+         <tr>
+             <th data-field="id">ID</th>
+             <th data-field="name">菜单名</th>
+             <th data-field="price">父级ID</th>
+             <th data-field="id">控制器</th>
+             <th data-field="name">方法</th>
+             <th data-field="price">全路径</th>
+             <th data-field="price">等级</th>
+             <th>操作</th>
+         </tr>
+         </thead>
+     </table>-->
+
+
+     <table id="mytab" class="table table-hover"></table>
+ </div>
+</section>
+
+<script type="text/javascript">
+
+
+    //根据窗口调整表格高度
+    $(window).resize(function() {
+        $('#mytab').bootstrapTable('resetView', {
+            height: tableHeight()
+        })
+    })
+    //生成用户数据
+    $('#mytab').bootstrapTable({
+        method: 'post',
+        contentType: "application/x-www-form-urlencoded",//必须要有！！！！
+        url:"/admin/auth/index",//要请求数据的文件路径
+        height:tableHeight(),//高度调整
+        toolbar: '#toolbar',//指定工具栏
+        striped: true, //是否显示行间隔色
+        dataField: "res",//bootstrap table 可以前端分页也可以后端分页，这里
+        //我们使用的是后端分页，后端分页时需返回含有total：总记录数,这个键值好像是固定的
+        //rows： 记录集合 键值可以修改  dataField 自己定义成自己想要的就好
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        queryParamsType:'limit',//查询参数组织方式
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        pageSize:10,//单页记录数
+        pageList:[5,10,20,30],//分页步进值
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#toolbar',//指定工作栏
+        columns:[
+        {
+            title:'全选',
+            field:'select',
+            //复选框
+            checkbox:true,
+            width:25,
+            align:'center',
+            valign:'middle'
+        },
+        {
+            title:'ID',
+            field:'ID',
+            visible:false
+        },
+        {
+            title:'登录名',
+            field:'LoginName',
+            sortable:true
+        },
+        {
+            title:'姓名',
+            field:'Name',
+            sortable:true
+        },
+        {
+            title:'手机号',
+            field:'Tel',
+        },
+        {
+            title:'邮箱',
+            field:'Email'
+        },
+        {
+            title:'注册日期',
+            field:'CreateTime',
+            sortable:true
+        },
+        {
+            title:'状态',
+            field:'Attribute',
+            align:'center',
+            //列数据格式化
+            formatter:operateFormatter
+        }
+    ],
+        locale:'zh-CN',//中文支持,
+        responseHandler:function(res){
+        //在ajax获取到数据，渲染表格之前，修改数据源
+        return res;
+    }
+    })
+    //三个参数，value代表该列的值
+    function operateFormatter(value,row,index){
+        if(value==2){
+            return '<i class="fa fa-lock" style="color:red"></i>'
+        }else if(value==1){
+            return '<i class="fa fa-unlock" style="color:green"></i>'
+        }else{
+            return '数据错误'
+        }
+    }
+
+    //请求服务数据时所传参数
+    function queryParams(params){
+        return{
+            //每页多少条数据
+            pageSize: params.limit,
+            //请求第几页
+            pageIndex:params.pageNumber,
+            Name:$('#search_name').val(),
+            Tel:$('#search_tel').val()
+        }
+    }
+    //查询按钮事件
+  /*  $('#search_btn').click(function(){
+        $('#mytab').bootstrapTable('refresh', {url: '../index.php/admin/auth/index'});
+    })*/
+    //tableHeight函数
+    function tableHeight(){
+        //可以根据自己页面情况进行调整
+        return $(window).height() -280;
+    }
+
+
+
+
+
+
+
+
+    new Vue({
+        el:'#app',
+        data:{
+            username:'',
+            password:'',
+        },
+        methods:{
+
+            allot:function(data){
+                $.ajax({
+                    type:"post",
+                    url: "{:url('admin/role/allot')}",
+                    data: {
+                        id:data,
+                    },
+                    //回调函数
+                    success: function(data){
+                       // console.log(data);
+/*                        //自定页
+                        layer.open({
+                            type: 1,
+                            skin: 'layui-layer-demo', //样式类名
+                            closeBtn: 0, //不显示关闭按钮
+                            anim: 2,
+                            shadeClose: true, //开启遮罩关闭
+                            content: data
+                        });*/
+                        //页面层
+                        layer.open({
+                            type: 1,
+                            skin: 'layui-layer-rim', //加上边框
+                            area: ['550px', '400px'], //宽高
+                            content: data
+                        });
+
+                    }});
+            },
+            login:function () {
+
+            }
+
+        },
+    })
+
+</script>
+</body>
+</html>

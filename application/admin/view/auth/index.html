@@ -1,0 +1,175 @@
+{include file="common/head" /}
+
+<!-- 引入bootstrap样式 -->
+<link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<!-- 引入bootstrap-table样式 -->
+<link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
+
+<!-- jquery -->
+<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- bootstrap-table.min.js -->
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+<!-- 引入中文语言包 -->
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
+<!--aside nav-->
+{include file="common/nav" /}
+<!--aside nav-->
+
+
+<style>
+.dataStatistic{width:400px;height:200px;border:1px solid #ccc;margin:0 auto;margin:10px;overflow:hidden}
+#cylindrical{width:400px;height:200px;margin-top:-15px}
+#line{width:400px;height:200px;margin-top:-15px}
+#pie{width:400px;height:200px;margin-top:-15px}
+</style>
+<section class="rt_wrap content mCustomScrollbar">
+
+ <div class="rt_content" id="app">
+
+
+     <div  class="layui-col-md12" style="margin-top: 1%;">
+
+     </div>
+     <div  class="layui-col-md12" style="margin-top: 1%;margin-bottom: 1%;">
+         <!--<button class="layui-btn layui-btn-danger" ><i class="layui-icon layui-icon-edit"></i>批量删除</button>-->
+
+         <div class="layui-col-md2" >
+             <input type="text" name="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+         </div>
+         <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon"></i></button>
+         <button class="layui-btn" @click = 'add()'><i class="layui-icon"></i>添加</button>
+     </div>
+
+          <table class="layui-table">
+              <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>菜单名</th>
+                  <th>父级ID</th>
+                  <th>控制器</th>
+                  <th>方法</th>
+                  <th>全路径</th>
+                  <th>等级</th>
+                  <th>操作</th>
+              </tr></thead>
+              <tbody>
+
+              {volist name="list" id="vo"}
+              <tr>
+                  <td>{$vo.auth_id}</td>
+                  <td>
+                      <?php echo str_repeat('&nbsp;&nbsp;&nbsp;/',$vo['auth_level']);?>
+                      {$vo.auth_name}
+                  </td>
+                  <td>{$vo.auth_pid}</td>
+                  <td>{$vo.auth_c}</td>
+                  <td>{$vo.auth_a}</td>
+                  <th>{$vo.auth_path}</th>
+                  <th>{$vo.auth_level}</th>
+                  <td class="td-manage">
+                      <!--<a title="编辑" onclick="WeAdminShow('编辑','./role-add.html')" href="javascript:;">-->
+                          <!--<i class="layui-icon">编辑</i>-->
+                      <!--</a>-->
+                      <a title="删除" @click="del({$vo.auth_id})" href="javascript:;">
+                          <i class="layui-icon"></i>删除
+                      </a>
+                  </td>
+              </tr>
+              {/volist}
+              </tbody>
+          </table>
+          {$list|raw}
+ </div>
+</section>
+
+<script type="text/javascript">
+
+
+    new Vue({
+        el:'#app',
+        data:{
+            username:'',
+            password:'',
+        },
+        methods:{
+
+            add:function(){
+                $.ajax({
+                    type:"post",
+                    url: "{:url('admin/auth/add_auth')}",
+                    data: {
+
+                    },
+                    //回调函数
+                    success: function(data){
+                       // console.log(data);
+                        //页面层
+                        layer.open({
+                            title:'添加权限',
+                            type: 1,
+                            anim: 6,
+                            skin: 'layui-layer-molv', //加上边框
+                            content: data
+                        });
+
+                    }});
+            },
+            del:function (index) {
+                alert(index);
+                $.ajax({
+                    type:"post",
+                    url: "{:url('admin/auth/del_auth')}",
+                    data: {
+                        auth_id:index
+                    },
+                    //回调函数
+                    success: function(data){
+                       console.log(data);
+
+                        if(data == 1){
+                            layer.msg('删除成功', {icon: 4});
+                            //js延迟跳转1秒
+                            setTimeout(function () {
+                                //跳转页面
+                                location.reload();
+                            },1000);
+                        }else {
+                            layer.msg('删除失败', {icon: 5});
+                        }
+
+                    }});
+            }
+
+        },
+    })
+
+
+
+
+    function setup() {
+        $.ajax({
+            type:"post",
+            url: "{:url('admin/admin/setup')}",
+            data: {
+
+            },
+            //回调函数
+            success: function(data){
+                // console.log(data);
+                //页面层
+                layer.open({
+                    title:'修改密码',
+                    type: 1,
+                    anim: 6,
+                    skin: 'layui-layer-molv', //加上边框
+                    content: data
+                });
+
+            }});
+    }
+</script>
+</body>
+</html>

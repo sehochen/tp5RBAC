@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>分配</title>
+    <script src="/static/admin/js/jquery.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/layui/layui.all.js"></script>
+    <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<div id="app">
+
+<form action="{:url('admin/role/fenadd')}" method="post">
+        <table class="layui-table">
+            <colgroup>
+                <col width="50">
+                <col width="200">
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>菜单</th>
+                <th>子级菜单</th>
+            </tr>
+            </thead>
+            <tbody>
+            <input type="hidden" name="role_id" value="{$list.role_id}">
+            {volist name="listA" id="v"}
+            <tr>
+                <td class="num">
+                    <input type='checkbox' name='role_auth_ids[]' checked="checked" value='{$v.auth_id}'/>
+                    {$v.auth_name}</td>
+                <td class="name">
+                    {volist name="listB" id="vo"}
+
+                    {if condition="$vo['auth_pid'] eq $v['auth_id']"}
+
+                    <div style="width: 100px; float: left">
+                        <input type="checkbox"  name='role_auth_ids[]'
+                         {in name="$vo['auth_id']" value="$list['role_auth_ids']"}
+                               checked="checked"
+                        {else/}
+                        {/in}
+                        value="{$vo.auth_id}">{$vo.auth_name}
+
+<!--                    {in name="$vo['auth_id']" value="$list['role_auth_ids']"}
+                        &#45;&#45;&ndash;&gt;在范围内
+                        {else/}
+                        >>>>>id不在范围内
+                        {/in}-->
+                    </div>
+                    {/if}
+                    {/volist}
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    <button class="layui-btn layui-btn-fluid"  >分配权限</button>
+</form>
+</div>
+
+</body>
+<script>
+
+</script>
+</html>

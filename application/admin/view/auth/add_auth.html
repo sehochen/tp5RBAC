@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加分类</title>
+    <script src="/static/admin/js/jquery.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/layui/layui.all.js"></script>
+    <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- 引入bootstrap样式 -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    .sub{
+        margin-top: 2%;
+    }
+</style>
+
+
+</head>
+<body>
+<div id="app">
+
+    <form action="add_auth.html" method="post">
+        <div >
+            <select class="form-control" name="auth_pid">
+                <option value="0">规则分类</option>
+                {volist name="list" id="vo"}
+                    <option value="{$vo.auth_id}">
+                       {$vo.auth_name}
+                    </option>
+                {/volist}
+            </select>
+
+            <input type="text" class="form-control sub" name="auth_c" placeholder="控制器">
+
+            <input type="text" class="form-control sub" name="auth_a" placeholder="方法">
+
+            <input type="text" class="form-control sub" name="auth_name" placeholder="权限名">
+        </div>
+
+        <button class="layui-btn layui-btn-fluid sub" lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
+
+    </form>
+</div>
+</body>
+</html>

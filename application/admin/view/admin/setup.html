@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加用户</title>
+    <script src="/static/admin/js/jquery.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/layui/layui.all.js"></script>
+    <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- 引入bootstrap样式 -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    .sub{
+        margin-top: 2%;
+    }
+</style>
+
+
+</head>
+<body>
+<div id="app">
+
+    <form action="{:url('admin/admin/setup')}" method="post">
+        <div >
+            <input type="hidden" name="id" value="{:session('id')}">
+            <!--<input type="text" class="form-control sub" name="username" placeholder="请输入用户名">-->
+            <input class="form-control" id="disabledInput" type="text" placeholder="用户名" disabled value="{:session('admin')}">
+
+            <input type="password" class="form-control sub" name="password" placeholder="请输入新密码">
+        </div>
+
+        <button class="layui-btn layui-btn-fluid sub" lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>修改密码</button>
+
+    </form>
+</div>
+</body>
+</html>

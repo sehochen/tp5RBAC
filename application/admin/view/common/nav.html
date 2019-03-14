@@ -1,0 +1,26 @@
+<aside class="lt_aside_nav">
+    <ul class="layui-nav layui-nav-tree layui-bg-green" lay-filter="test">
+        <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+
+        <li class="layui-nav-item layui-nav-itemed">
+            {volist name="listA" id="v"}
+                <i class="layui-icon layui-icon-align-left" style="font-size: 15px; color: #FFFFFF;"></i>
+                <strong>{$v.auth_name}</strong>
+                <i class="layui-icon layui-icon-align-left" style="font-size: 15px; color: #FFFFFF;"></i>
+                <dl class="layui-nav-child"><dd>
+                    {volist name="listB" id="vo"}
+                        {if condition="$vo['auth_pid'] eq $v['auth_id']"}
+                        <a href="{:url('admin/'.$vo['auth_c'].'/'.$vo['auth_a'])}"  >
+                        {$vo.auth_name}
+                        <i class="layui-icon layui-icon-list" style="font-size: 15px; color: #FFFFFF;"></i>
+                        </a>
+                        {/if}
+                    {/volist}
+                    </dd>
+                </dl>
+            {/volist}
+
+        </li>
+
+    </ul>
+</aside>
